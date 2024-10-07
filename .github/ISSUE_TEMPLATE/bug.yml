@@ -1,0 +1,90 @@
+name: Báo Bug VitaDairy
+description: Dùng để thông báo, tạo các bug từ phía khách hàng sang cho development team.
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ---
+
+        ### **Trước khi tạo bug, vui lòng:**
+
+        - Tôi tin chắc bạn đã hiểu rõ những qui tắc báo/tiếp nhận feedback/bug. Nếu quên bạn có thể đọc nó [Tại Đây](https://github.com/VitaDairy/vtd-community/blob/main/README.md).
+
+        **Cảm ơn bạn đã thông báo bug cho chúng tôi!**  
+        Đóng góp của bạn sẽ được team phát triển phản hồi trong thời gian sớm nhất.
+
+        ---
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Mức độ ưu tiên
+      description: "Mức độ ưu tiên của bug, vui lòng đọc kĩ phần đầu !"
+      options:
+        - Low
+        - Normal
+        - High
+        - Critical
+        - Khác (Đề cập ở dưới phần chi tiết)
+  - type: dropdown
+    id: type
+    attributes:
+      label: Loại Bug
+      description: Loại bug mà bạn đang gặp phải (Logic, UI/UX, Data, Khác)
+      options:
+        - Logic
+        - UI/UX
+        - Data
+        - Khác (Đề cập ở dưới phần chi tiết)
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Môi trường
+      description: Môi trường mà đang gặp vấn đề?
+      options:
+        - Local
+        - Develop
+        - Staging
+        - Product
+    validations:
+      required: true
+  - type: dropdown
+    id: relation
+    attributes:
+      label: Ảnh hưởng chức năng khác
+      description: Bug này có ảnh hưởng tới chức năng khác đang chạy trên hệ thống không?
+      options:
+        - Không có chức năng nào khác bị ảnh hưởng
+        - Có (Đề cập ở dưới phần chi tiết)
+        - Không biết (Đề cập ở dưới phần chi tiết)
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: Hệ điều hành
+      description: "Hệ điều hành nào đang gặp phải vấn đề này"
+      placeholder: "macOS Big Sur 11.5.2, Android 13, iOS 15.04"
+  - type: input
+    id: version
+    attributes:
+      label: Phiên bản ứng dụng bạn đang sử dựng
+      description: "Cung cấp đầy đủ phiên bản mà bạn đang sử dụng"
+      placeholder: "v3.2.14"
+  - type: textarea
+    id: description
+    attributes:
+      label: Chi tiết bug
+      description: Vui lòng thêm thông tin chi tiết bug, gắn thêm hình ành, video nếu có.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Các bước tái hiện.
+      description: Vui lòng cung cấp từng bước cách tái hiện bug một cách chi tiết nhất.
+  - type: textarea
+    id: reference
+    attributes:
+      label: Các thông báo về ghi chú, dữ liệu, dẫn chứng liên quan.
+      description: Vui lòng cung cấp các dòng log, tài khoản đăng nhập, cURL, tài liệu đính kèm để chứng minh bug tồn tại.

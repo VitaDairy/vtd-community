@@ -1,0 +1,24 @@
+name: Auto assign issue to project
+
+on:
+  issues:
+    types: [opened, reopened]
+
+env:
+  project: Community Projects
+  projectId: 3
+
+jobs:
+  issue_opened:
+    name: issue_opened
+    runs-on: ubuntu-latest
+    # if: github.event_name == 'issues' && github.event.action == 'opened'
+    steps:
+      - name: Move issue to ${{ env.project }}
+        uses: leonsteinhaeuser/project-beta-automations@v2.2.1
+        with:
+          gh_token: ${{ secrets.GH_PAT }}
+          organization: VitaDairy
+          project_id: ${{ env.projectId }}
+          resource_node_id: ${{ github.event.issue.node_id }}
+          status_value: Waiting

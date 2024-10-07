@@ -1,0 +1,25 @@
+name: Project Issue State Sync
+
+env:
+  project: Community Projects
+  projectId: 3
+
+on:
+  schedule:
+    - cron: 0/5 1-12 * * 1-5
+
+  workflow_dispatch:
+
+jobs:
+  issue-state-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sync issue states
+        uses: dasmerlon/project-issue-state-sync@v2
+        with:
+          github_token: ${{ secrets.GH_PAT }}
+          owner: VitaDairy
+          project_number: ${{ env.projectId }}
+          verbosity: debug
+          closed_statuses: Done
+          open_statuses: Wating,Todo,In Progress
