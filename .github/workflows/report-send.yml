@@ -15,7 +15,6 @@ jobs:
       TELEGRAM_CHAT_ID: ${{ vars.TELEGRAM_CHAT_ID }}
       TELEGRAM_TOPIC_ID: ${{ vars.TELEGRAM_TOPIC_ID }}
       GH_TOKEN: ${{ github.token }}
-      TZ: "Asia/Bangkok"
 
     steps:
       - name: Get the current hour in GMT+7 and return the adjusted time
