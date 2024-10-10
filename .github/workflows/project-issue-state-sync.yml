@@ -22,4 +22,4 @@ jobs:
           project_number: ${{ env.projectId }}
           verbosity: debug
           closed_statuses: Done
-          open_statuses: Wating,Todo,In Progress
+          open_statuses: Waiting,Todo,In Progress
