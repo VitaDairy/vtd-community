@@ -1,9 +1,10 @@
 name: Send report
 
 on:
-  push:
-    branches:
-      - main
+  schedule:
+    - cron: "30 13 * * *" # 08:30 PM GMT+7 (01:30 PM UTC)
+    - cron: "30 06 * * *" # 01:30 PM GMT+7 (06:30 AM UTC)
+    - cron: "30 10 * * *" # 05:30 PM GMT+7 (10:30 AM UTC)
 
 jobs:
   report:
@@ -14,20 +15,51 @@ jobs:
       TELEGRAM_CHAT_ID: ${{ vars.TELEGRAM_CHAT_ID }}
       TELEGRAM_TOPIC_ID: ${{ vars.TELEGRAM_TOPIC_ID }}
       GH_TOKEN: ${{ github.token }}
+      TZ: "Asia/Bangkok"
 
     steps:
+      - name: Get the current hour in GMT+7 and return the adjusted time
+        id: time_check
+        run: |
+          # Get the current hour in GMT+7 (Indochina Time)
+          CURRENT_HOUR=$(TZ="Asia/Bangkok" date +"%H")
+
+          # Get today's date in UTC format
+          CURRENT_DATE_UTC=$(TZ="UTC" date +"%Y-%m-%d")
+
+          if [[ "$CURRENT_HOUR" == "08" ]]; then
+            # If it's 8 AM, return 5:30 PM the previous day
+            ADJUSTED_TIME=$(date -v-1d -v17H -v30M +"%Y-%m-%dT%H:%M:%S UTC")
+            echo "adjusted_time=$ADJUSTED_TIME" >> $GITHUB_OUTPUT
+          elif [[ "$CURRENT_HOUR" == "13" ]]; then
+            # If it's 1 PM, return 8:00 AM today
+            ADJUSTED_TIME=$(date -v8H +"%Y-%m-%dT%H:%M:%S UTC")
+            echo "adjusted_time=$ADJUSTED_TIME" >> $GITHUB_OUTPUT
+          elif [[ "$CURRENT_HOUR" == "17" ]]; then
+            # If it's 5 PM, return 12:00 PM today
+            ADJUSTED_TIME=$(date -v12H +"%Y-%m-%dT%H:%M:%S UTC")
+            echo "adjusted_time=$ADJUSTED_TIME" >> $GITHUB_OUTPUT
+          else
+            echo "adjusted_time=UNKNOWN" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Print the adjusted time
+        run: |
+          echo "The adjusted time is: ${{ steps.time_check.outputs.adjusted_time }}"
+
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Run
+        if: steps.time_check.outputs.adjusted_time != 'UNKNOWN'
         run: |
-          gh issue list --json assignees,author,body,closed,closedAt,comments,createdAt,isPinned,labels,milestone,number,projectCards,reactionGroups,state,stateReason,title,updatedAt,url > issues.json
+          gh issue list  --search "${{ steps.time_check.outputs.adjusted_time }}" --json assignees,author,body,closed,closedAt,comments,createdAt,isPinned,labels,milestone,number,projectCards,reactionGroups,state,stateReason,title,updatedAt,url > issues.json
           csv_name=$(date +"RP%y%m%d%H%M")$(md5sum issues.json | tr 'a-z' 'A-Z' | cut -c 1-6).csv
           jq -r '.[] | [.number, .title, .state, .author.login, .createdAt, .updatedAt] | @csv' "issues.json" > "$csv_name"
 
-          # curl --location "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" \
-          #       --header 'Content-Type: multipart/form-data' \
-          #       --form "chat_id=$TELEGRAM_CHAT_ID" \
-          #       --form "reply_to_message_id=$TELEGRAM_TOPIC_ID" \
-          #       --form "document=@$csv_name" \
-          #       --form "caption=@nnthai_aute, @ttnquynh0711"
+          curl --location "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" \
+                --header 'Content-Type: multipart/form-data' \
+                --form "chat_id=$TELEGRAM_CHAT_ID" \
+                --form "reply_to_message_id=$TELEGRAM_TOPIC_ID" \
+                --form "document=@$csv_name" \
+                --form "caption=@nnthai_aute, @ttnquynh0711"
