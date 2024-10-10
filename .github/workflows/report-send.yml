@@ -47,14 +47,10 @@ jobs:
         run: |
           echo "The adjusted time is: ${{ steps.time_check.outputs.adjusted_time }}"
 
-      - name: Checkout
-        if: steps.time_check.outputs.adjusted_time != 'UNKNOWN'
-        uses: actions/checkout@v4
-
       - name: Run
         if: steps.time_check.outputs.adjusted_time != 'UNKNOWN'
         run: |
-          gh issue list  --search "${{ steps.time_check.outputs.adjusted_time }}" --json assignees,author,body,closed,closedAt,comments,createdAt,isPinned,labels,milestone,number,projectCards,reactionGroups,state,stateReason,title,updatedAt,url > issues.json
+          gh issue list --search "${{ steps.time_check.outputs.adjusted_time }}" --json assignees,author,body,closed,closedAt,comments,createdAt,isPinned,labels,milestone,number,projectCards,reactionGroups,state,stateReason,title,updatedAt,url > issues.json
           csv_name=$(date +"RP%y%m%d%H%M")$(md5sum issues.json | tr 'a-z' 'A-Z' | cut -c 1-6).csv
           jq -r '.[] | [.number, .title, .state, .author.login, .createdAt, .updatedAt] | @csv' "issues.json" > "$csv_name"
 
