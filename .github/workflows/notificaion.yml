@@ -11,7 +11,7 @@ jobs:
     env:
       TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
       TELEGRAM_CHAT_ID: ${{ vars.TELEGRAM_CHAT_ID }}
-      TELEGRAM_TOPIC_ID: ${{ vars.TELEGRAM_TOPIC_ID }} # If you're using a topic in Telegram
+      TELEGRAM_TOPIC_ID: ${{ vars.TELEGRAM_TOPIC_ID }}
 
     steps:
       - name: Generate message
