@@ -48,6 +48,7 @@ jobs:
           echo "The adjusted time is: ${{ steps.time_check.outputs.adjusted_time }}"
 
       - name: Checkout
+        if: steps.time_check.outputs.adjusted_time != 'UNKNOWN'
         uses: actions/checkout@v4
 
       - name: Run
