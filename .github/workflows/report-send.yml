@@ -13,25 +13,24 @@ jobs:
       TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
       TELEGRAM_CHAT_ID: ${{ vars.TELEGRAM_CHAT_ID }}
       TELEGRAM_TOPIC_ID: ${{ vars.TELEGRAM_TOPIC_ID }}
+      GH_TOKEN: ${{ github.token }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Run
+        id: run
         run: |
+          csv_name=$(date +"RP%y%m%d%H%M")$(md5sum issues.csv | tr 'a-z' 'A-Z' | cut -c 1-6).csv
           gh issue list --json assignees,author,body,closed,closedAt,comments,createdAt,isPinned,labels,milestone,number,projectCards,reactionGroups,state,stateReason,title,updatedAt,url > issues.json
-          jq -r '.[] | [.number, .title, .state, .author.login, .createdAt, .updatedAt] | @csv' "issues.json" > "issues.csv"
+          jq -r '.[] | [.number, .title, .state, .author.login, .createdAt, .updatedAt] | @csv' "issues.json" > "$csv_name"
 
-          md5sum issues.csv | tr 'a-z' 'A-Z' | cut -c 1-6
-          
-          current_datetime=$(date +"RP%y%m%d%H%M")
-          random_string=$(md5sum issues.csv | tr 'a-z' 'A-Z' | cut -c 1-6)
+          curl --location "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" \
+                --header 'Content-Type: multipart/form-data' \
+                --form "chat_id=$TELEGRAM_CHAT_ID" \
+                --form "reply_to_message_id=$TELEGRAM_TOPIC_ID" \
+                --form "document=@csv_name" \
+                --form "caption='@nnthai_aute, @ttnquynh0711'"
 
-          echo $current_datetime
-          echo $random_string
-          
-        env:
-          GH_TOKEN: ${{ github.token }}
-
-      
+          echo "csv_name=$csv_name" >> $GITHUB_OUTPUT
