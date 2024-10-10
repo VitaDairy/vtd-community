@@ -20,8 +20,8 @@ jobs:
 
       - name: Run
         run: |
-          gh issue list --json assignees,author,body,closed,closedAt,comments,createdAt,isPinned,labels,milestone,number,projectCards,reactionGroups,state,stateReason,title,updatedAt,url > issues.json
-          jq -r '.[] | [.number, .title, .state, .author.login, .createdAt, .updatedAt] | @csv' "issues.json" > "issues.csv"
+          # gh issue list --json assignees,author,body,closed,closedAt,comments,createdAt,isPinned,labels,milestone,number,projectCards,reactionGroups,state,stateReason,title,updatedAt,url > issues.json
+          # jq -r '.[] | [.number, .title, .state, .author.login, .createdAt, .updatedAt] | @csv' "issues.json" > "issues.csv"
           
           current_datetime=$(date +"RP%y%m%d%H%M")
           random_string=$(cat /dev/urandom | tr -dc 'A-Z0-9' | fold -w 4 | head -n 1)
