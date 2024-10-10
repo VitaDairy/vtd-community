@@ -11,8 +11,8 @@ jobs:
     name: Send report
     runs-on: ubuntu-latest
     env:
-      TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
-      TELEGRAM_CHAT_ID: ${{ vars.TELEGRAM_CHAT_ID }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+      TELEGRAM_GROUP_ID: ${{ vars.TELEGRAM_CHAT_ID }}
       TELEGRAM_TOPIC_ID: ${{ vars.TELEGRAM_TOPIC_ID }}
       GH_TOKEN: ${{ github.token }}
 
@@ -53,9 +53,9 @@ jobs:
           csv_name=$(date +"RP%y%m%d%H%M")$(md5sum issues.json | tr 'a-z' 'A-Z' | cut -c 1-6).csv
           jq -r '.[] | [.number, .title, .state, .author.login, .createdAt, .updatedAt] | @csv' "issues.json" > "$csv_name"
 
-          curl --location "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" \
+          curl --location "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendDocument" \
                 --header 'Content-Type: multipart/form-data' \
-                --form "chat_id=$TELEGRAM_CHAT_ID" \
+                --form "chat_id=$TELEGRAM_GROUP_ID" \
                 --form "reply_to_message_id=$TELEGRAM_TOPIC_ID" \
                 --form "document=@$csv_name" \
                 --form "caption=@nnthai_aute, @ttnquynh0711"
