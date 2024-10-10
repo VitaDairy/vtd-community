@@ -22,8 +22,8 @@ jobs:
       - name: Run
         id: run
         run: |
-          csv_name=$(date +"RP%y%m%d%H%M")$(md5sum issues.csv | tr 'a-z' 'A-Z' | cut -c 1-6).csv
           gh issue list --json assignees,author,body,closed,closedAt,comments,createdAt,isPinned,labels,milestone,number,projectCards,reactionGroups,state,stateReason,title,updatedAt,url > issues.json
+          csv_name=$(date +"RP%y%m%d%H%M")$(md5sum issues.json | tr 'a-z' 'A-Z' | cut -c 1-6).csv
           jq -r '.[] | [.number, .title, .state, .author.login, .createdAt, .updatedAt] | @csv' "issues.json" > "$csv_name"
 
           curl --location "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument" \
