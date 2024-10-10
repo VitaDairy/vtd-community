@@ -17,9 +17,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          repository: InfluenceNews/nodejs-innews-crawler
-          token: ${{ secrets.GH_PAT }}
 
       - name: Run
         run: gh --version
